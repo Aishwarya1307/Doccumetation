@@ -45,4 +45,73 @@
   ![Screenshot from 2023-11-02 18-25-32](https://github.com/Aishwarya1307/CREATE_REACT_APP/assets/125255809/4d767142-7efc-459d-b3c7-1e004e45abbf)
 
 
-    
+-   If `com_met_data`(database entry for current sub_ref_no) is empty then add entry in database in 'raw_scan_metadata' table
+-   Else getting data from `com_met_data`
+
+            raw_scan_barcodes_ = com_met_data[0].barcode  ...(list of scanned barcodes)
+            raw_scan_epcs_ = com_met_data[0].epc  ...( List of scanned Epcs)
+            raw_scan_metadata_ = com_met_data[0].raw_scan_metadata  ... ( json like {"barcode" : {"epc":[],"count":0,"barcode":}})
+
+  - **Compare Data with com_met_data**
+
+    -  Getting an epc from epc_ after that, check epc is present in the `raw_scan_epcs_` .
+       -  If it is not present
+          -  get 'barcode' from 'barcode_data' ({ "barcode1":[epc1,epc2,epc3], "barcode2" : [epc4,epc5,epc6] })
+            -  Check 'epc' is present in the list of epcs of 'barcode',
+              - If it is present
+                -  append 'epc' in the `raw_scan_epcs_` .
+                -  Check barcode from barcode_data is present in 'raw_scann_barcodes_' (stored scanned list barcodes in db)
+                   -  barcode is not present
+                      -   Add barcode from barcode_data to the 'raw_scan_barcodes_'
+                      -   And add json in `raw_scan_metadata_`
+                       
+                                raw_scan_metadata_[barcode] = {
+                                                                  "epc" : barcode_data[barcode],  ...(list of epc's)
+                                                                  "count" : len(barcode_data[barcode]),
+                                                                  "product_code" : barcode
+                                                                }  
+                   -  barcode is present 'raw_scann_barcodes_' 
+                     - Add EPC in Barcode Mapping and Increase the Count
+
+                               raw_scan_metadata_[barcode]["epc"].append(ep).....(epc append in list of raw_scan_metadata_[barcode]["epc"])
+                               raw_scan_metadata_[barcode]["count"] = raw_scan_metadata_[barcode]["count"] + 1 .....(increase epc count by one
+      
+      -   Check  for the 'sub_ref_no' is_submit is true or false
+          - if it is true then scanning is stopped warning
+      -   Iteratting an `raw_scan_metadata`for calculate total of scanned_epc in variable `total_found_count`
+      -   Update all the comparision values in the database table
+   
+                  {
+                    "epc": raw_scan_epcs_,
+                    "barcode": raw_scan_barcodes_,
+                    "raw_scan_metadata": raw_scan_metadata_,
+                    "total_found_count": total_found_count
+                   }
+          
+      -    Send raw_scan_data to the UI
+
+                           { 
+                             "total_found_count": total_found_count,
+                             "raw_scan_metadata": raw_scan_metadata_,
+                             "expected_count":None,
+                             "valid_found_count":None,
+                             "extra_found_count":None
+                            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
