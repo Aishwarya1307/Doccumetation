@@ -6,7 +6,8 @@
 -   When box insert into the Tunnel then , scannig process starts and scanned tags are added in redis_database.
 -   https://github.com/iam-rnd/tagid-iot-gateway/blob/82f5f3b3aa0223397730e94649304a2ee3e2062a/src/routes/SocketManager/CrimsouneClub/socket_manager.py#L72
 -   
-     ![Screenshot from 2023-11-02 17-16-24](https://github.com/Aishwarya1307/CREATE_REACT_APP/assets/125255809/61ebc93d-d5de-44eb-a952-9f59823ec2ab)
+   ![Screenshot from 2023-11-02 17-16-24](https://github.com/Aishwarya1307/Doccumetation/assets/125255809/686f2714-fb57-4135-9274-69d28667586e)
+
 
 -   When box insert into the Tunnel then send json to UI `{
                     "status": "BOX_INSIDE_TUNNEL",
@@ -18,7 +19,8 @@
 -   In `barcode_data` variable, stores a json '{"barcode1":[epc1,epc2,epc3] ,"barcode2":[epc4,epc5,epc6]}' with unique epc's and barcodes.
 -   https://github.com/iam-rnd/tagid-iot-gateway/blob/82f5f3b3aa0223397730e94649304a2ee3e2062a/src/routes/SocketManager/CrimsouneClub/socket_manager.py#L103
    
-      ![Screenshot from 2023-11-02 17-41-32](https://github.com/Aishwarya1307/CREATE_REACT_APP/assets/125255809/587ba34a-c844-43af-901e-0f6f191e3a2c)
+      ![Screenshot from 2023-11-02 17-41-32](https://github.com/Aishwarya1307/Doccumetation/assets/125255809/cc215914-eec5-47df-9fe0-9884c964ffc7)
+
 
 -   The `compare_epc_logic` function get an entry from postgres database of unique sub_reference_number, then store in `com_met_data` variable
 
@@ -42,7 +44,8 @@
             }
           - `epc_' list of unique epc's.
 
-  ![Screenshot from 2023-11-02 18-25-32](https://github.com/Aishwarya1307/CREATE_REACT_APP/assets/125255809/4d767142-7efc-459d-b3c7-1e004e45abbf)
+ ![Screenshot from 2023-11-02 18-25-32](https://github.com/Aishwarya1307/Doccumetation/assets/125255809/c927ba0f-e539-4b00-8318-cf59ead0d9a3)
+
 
 
 -   If `com_met_data`(database entry for current sub_ref_no) is empty then add entry in database in 'raw_scan_metadata' table
