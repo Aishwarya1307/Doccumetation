@@ -71,7 +71,7 @@
                                                                   "product_code" : barcode
                                                                 }  
                    -  barcode is present 'raw_scann_barcodes_' 
-                     - Add EPC in Barcode Mapping and Increase the Count
+                      - Add EPC in Barcode Mapping and Increase the Count
 
                                raw_scan_metadata_[barcode]["epc"].append(ep).....(epc append in list of raw_scan_metadata_[barcode]["epc"])
                                raw_scan_metadata_[barcode]["count"] = raw_scan_metadata_[barcode]["count"] + 1 .....(increase epc count by one
