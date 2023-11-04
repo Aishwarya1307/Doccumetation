@@ -69,8 +69,8 @@
                       -   And add json in `raw_scan_metadata_`
                        
                                 raw_scan_metadata_[barcode] = {
-                                                                  "epc" : barcode_data[barcode],  ...(list of epc's)
-                                                                  "count" : len(barcode_data[barcode]),
+                                                                  "epc" : [epc],  ...(list of epc's)
+                                                                  "count" : 1 ,
                                                                   "product_code" : barcode
                                                                 }  
                    -  barcode is present 'raw_scann_barcodes_' 
@@ -88,13 +88,13 @@
                     "epc": raw_scan_epcs_,
                     "barcode": raw_scan_barcodes_,
                     "raw_scan_metadata": raw_scan_metadata_,
-                    "total_found_count": total_found_count
+                    "total_found_count": len(raw_scan_epcs_)
                    }
           
       -    Send raw_scan_data to the UI
 
                            { 
-                             "total_found_count": total_found_count,
+                             "total_found_count": len(raw_scan_epcs_),
                              "raw_scan_metadata": raw_scan_metadata_,
                              "expected_count":None,
                              "valid_found_count":None,
