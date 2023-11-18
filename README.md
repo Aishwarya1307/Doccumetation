@@ -209,11 +209,155 @@
                         - Firstly check `com_met_data` is null
                           1. raise Exception as "Scan_id is None"
                         - Scanned data whitch is stored in db that is initialize as below:
+                        - 
                             ![Screenshot from 2023-11-17 17-45-55](https://github.com/Aishwarya1307/Doccumetation/assets/125255809/12f4b1f0-6457-4735-8d3a-13a8c470fb86)
+                          
+                          1.`exp_barcodes` ===: ["8907546416864", "8907546599338", "8907546662742"]
+                          
+                          2.`exp_metadata` ===: {"8907546877276": 2, "8907546877283": 2, "8907546877375": 2}
+                          
+                          3.`scanned_metadata` ===: {"8907546750791": {"epc": [], "count": 1, "found_count": 0, "product_code": "8907546750791"}, "8907546750807": {"epc": [], "count": 1, "found_count": 0, "product_code": "8907546750807"}}
+                          
+                          4.`extra_metadata` ===:  {"8907546390256": {"epc": ["30361FAC68261C40000000C9"], "count": 1, "product_code": "8907546390256"}, "8907546419940": {"epc": ["30361FAC68290280000000C8"], "count": 1, "product_code": "8907546419940"}}
+                          
 
-                        - getting scan_barcode from barcode_data.keys()
-                          1. Check scan_barcode in expected_barcodes which is from db
-                          2. 
+                        - getting scan_barcode from barcode_data.keys() whitch is scanned tags from redis db like `{'barcode':[epc1,epc2,epc3]}`
+                          1. Check scan_barcode in expected_barcodes which is from db..expected_barcodes like `["8907546750791", "8907546750807"]`
+                          
+                             *. When scan_barcode is not found in scanned_matadata keys .......Then add `scanned_barcode` in `scanned_meatdata` as key
+                  
+                              ![Screenshot from 2023-11-18 10-41-16](https://github.com/Aishwarya1307/Doccumetation/assets/125255809/e9e7cc6e-c9c5-4854-a6dd-a5aaf08307ed)
+
+                             **.  Check scanned barcode count from expected_metadata compared with length of scanned count of scanned_barcode
+                                   
+                             **. If `expected_metadata count of that barcode` is less than or equal to the `scanned count of scanned_barcode`....Then in valid_found added with scanned count of scanned barcode
+                                   
+                             **. Otherwise substract `count of scanned_barcode of expected_meatdata` from `count of scanned_barcode of product code`. And substarcted value is add in the `extra_found` count
+                                   
+                             **. Increase `total_found` count with length of barcode_data of scanned_barcode.
+                              
+                             ![Screenshot from 2023-11-18 11-04-20](https://github.com/Aishwarya1307/Doccumetation/assets/125255809/ee556c4a-d247-4c4c-9995-70c982800775)
+                            *. When scan_barcode is found in scanned_matadata keys
+                        
+                              **. getting single epc from barcode_data of barcode which is list of scanned_epcs
+                             
+                                ***.  Check epc not found in json of scanned_metadata of that product code of `epc` value
+                             
+                                  ****. Append the epc in the scanned_metadata of that product_code of epc list
+                             
+                                   ****. Found count of that product code is increased by one
+                             
+                                   ****. Check If the EPC are Extra Found or Valid Found ....if value of expected_metadata of scanned_barcode is greater than equals to the  scanned_metadata of barcode of found_count
+
+                                     *****. e.g expected_count=10 and scanned_found count is 5 then  `epc` of that product code will be added in the `valid_found`
+
+                                     ***** e.g expected_count=10 and scanned_found count is 11 then  `epc` of that product code will be added in the `extra_found`
+                             
+                                   ****. total_found count is increased by one
+                             ![Screenshot from 2023-11-18 11-40-46](https://github.com/Aishwarya1307/Doccumetation/assets/125255809/ba547623-6d2f-464e-94e2-68c2286b7919)
+
+                             2. *. scan_barcode Not in expected_barcodes which is from db..expected_barcodes like `["8907546750791", "8907546750807"]`
+                               
+                                  **. Add the Scan Barcode in the Extra Found and Update the Extra Found Category
+                                
+                                  **. also increase the `extra_found` and `total_found` count increased by extra_metadata of scanned_barcode of count value
+
+                                ![Screenshot from 2023-11-18 12-08-28](https://github.com/Aishwarya1307/Doccumetation/assets/125255809/31e457e5-6ebe-4732-b4b6-236b4f85cf88)
+
+                                * scan_barcode in expected_barcodes which is from db..expected_barcodes like `["8907546750791", "8907546750807"]`
+                                  
+                                **. Fetching epc one by one from barcode_data of scan_barcode
+                                
+                                 ***. Check that epc is not in the json of extra_metadata of scan_barcode.["epc"]
+                                
+                                 ****. Add the epc in Extra found barcode
+                                
+                                 ****. count of that barcode is inceased by one also increase `total_found` count by one
+                       
+                                ![Screenshot from 2023-11-18 12-09-03](https://github.com/Aishwarya1307/Doccumetation/assets/125255809/c0d20767-422c-41d9-b6d3-2d6f0f014b84)
+
+
+                           - CHECH DATA IS MATCHE OR UNMATCH   ------In Match case there is no extra count
+                             1. check `total_found` count is matched with `exp_count`
+                              
+                                *. getting one by one barcode from scanned_metadata
+                                
+                                **.  check found count of barcode epc's is equals to the expected_count of barcode
+                                
+                                  ***. maitains `match_flag` when it is true then it will be `True`.
+                                
+                                 ***. else `match_falg` will be False and break it
+                                
+                                 ![Screenshot from 2023-11-18 12-21-14](https://github.com/Aishwarya1307/Doccumetation/assets/125255809/cf6ff87c-721f-43cf-9c0a-dced3fe75ae0)
+
+                           - when scanning is stooped in db then compare_data logic raise an error
+                         
+                           - all Data will be update in db in the metadata table
+                             
+                            ![Screenshot from 2023-11-18 12-20-47](https://github.com/Aishwarya1307/Doccumetation/assets/125255809/35b55a7e-d604-429d-bcaa-8cb5ea176370)
+
+                           - Return data to the function calling
+                             
+                                       inward_data = {
+                                                "expected_count": exp_count,
+                                                "total_found_count": total_found,
+                                                "valid_found_count": valid_found,
+                                                "extra_found_count": extra_found,
+                                                "extra_found": extra_metadata,
+                                                "scanned_metadata": scanned_metadata
+                                            }
+                                            return inward_data, match_flag
+                             
+<---src.routes.SocketManager.StyleUnion.socket_manager--->
+           
+                  - When tags scanning starts then sends jason to the UI
+                 
+                                      {
+                                        "status": "SCANNING_BOX",
+                                        "data": compare_data,
+                                        "match_flag": match_flag
+                                    }
+
+                  - checks continuesly data is matched 
+
+                    - data is matchde then while loop starts
+                       1. in loop check output box state is True then `OUT3` trigger send to the "send_gpio_trig_zone"  and break loop
+
+                     - update box scannign state in the db for the box_number
+                     - After that send json to the UI for close the websocket connection with matched data
+
+                                             {
+                                        "status": "CLOSE_CONNECTION",
+                                        "data": {
+                                            "status": "BOX_EXIT_MATCH",
+                                            "message": f"Data Matched",
+                                            "match_flag": match_flag
+                                        }
+                                    }
+
+
+
+                
+-                 
+![Screenshot from 2023-11-18 12-40-15](https://github.com/Aishwarya1307/Doccumetation/assets/125255809/6e46d14b-52ce-4b37-8ce6-d1f55a4ed5e9)
+
+                  - If Data is Unmatched , Check Box is Exit to the Tunnel when box exited tunnel Then,
+                  1. box Out of tunnel trigger `OUT3` and for unmatched data `OUT1` is Triggered.
+      
+
+                  2. Update db scanning is stopped.
+                  3. send json to the UI 
+
+                              {
+                                  "status": "CLOSE_CONNECTION",
+                                  "data": {
+                                      "status": "BOX_EXIT_UNMATCH",
+                                      "message": f"Box Out of the Tunnel",
+                                      "match_flag": match_flag
+                                  }
+                              }
+                             
+
                     
                   
                     
